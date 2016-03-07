@@ -1,5 +1,7 @@
 package co.ghola.pushmq4;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +24,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "my little app";
+    private final static String SERVICE_CLASSNAME ="co.ghola.pushmq4.BackgroundService";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,91 +41,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Intent mServiceIntent = new Intent(this, BackgroundService.class);
-        startService(mServiceIntent);
-        /*String clientId = MqttClient.generateClientId();
-        MqttAndroidClient client =
-                new MqttAndroidClient(this.getApplicationContext(), "tcp://192.168.0.103:1883",
-                        clientId);
-
-        try {
-            client.setCallback(new MqttCallback() {
-
-                @Override
-                public void connectionLost(Throwable cause) {
-                    Log.d(TAG, "connection Lost");
-                }
-
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    Log.d(TAG, "delivered");
-
-                    Intent push = new Intent(getApplicationContext(), PushReceiver.class);
-
-                    //push.setPackage("co.ghola.pushmq.receivers");
-                    push.putExtra("message", message.toString());
-                    //push.setAction("pushMQ");
-                    getApplicationContext().sendBroadcast(push);
-
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
-
-                }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-
-        try {
-            IMqttToken token = client.connect();
-
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    // We are connected
-                    Log.d(TAG, "onSuccess");
-                    subscribe(asyncActionToken);
-
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    // Something went wrong e.g. connection timeout or firewall problems
-                    Log.d(TAG, "onFailure");
-
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
+        if(!serviceIsRunning()) {
+            Intent mServiceIntent = new Intent(this, BackgroundService.class);
+            startService(mServiceIntent);
         }
     }
 
-    public void subscribe(IMqttToken token){
-
-        String topic = "foo/bar/message";
-        int qos = 0;
-        try {
-            IMqttToken subToken = token.getClient().subscribe(topic, qos);
-            subToken.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "I'm now subscribed!");
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken,
-                                      Throwable exception) {
-                    // The subscription could not be performed, maybe the user was not
-                    // authorized to subscribe on the specified topic e.g. using wildcards
-
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
+    private boolean serviceIsRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (SERVICE_CLASSNAME.equals(service.service.getClassName())) {
+                return true;
+            }
         }
-*/
+        return false;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,6 +77,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 
 }

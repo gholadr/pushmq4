@@ -38,8 +38,7 @@ public class PushReceiver extends BroadcastReceiver
         nBuilder.setContentText(notificationDesc);
         nBuilder.setSmallIcon(R.drawable.icon_alpha);
         nBuilder.setLargeIcon(largeIcon); //setLargeIcon(R.drawable.ic_launcher);
-        intent = new Intent(context, MainActivity.class); //cheating - dont want onCreate to be invoked on MainActivity.
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 1234, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         nBuilder.setContentIntent(pendingIntent);
         nBuilder.setAutoCancel(true);
