@@ -1,15 +1,9 @@
 package co.ghola.pushmq4;
 
+import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -20,27 +14,33 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity {
-    private static String TAG = "my little app";
+/**
+ * Created by macbook on 3/7/16.
+ */
+public class BackgroundService extends IntentService{
+
+    public static String TAG ="Backgrounder";
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     */
+    public BackgroundService() {
+        super("BackgroundService");
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        Intent mServiceIntent = new Intent(this, BackgroundService.class);
-        startService(mServiceIntent);
-        /*String clientId = MqttClient.generateClientId();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "Service running");
+        if (intent == null)
+            onHandleIntent(new Intent());
+        else {
+            onHandleIntent(intent);
+        }
+        return Service.START_STICKY;
+    }
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        String clientId = MqttClient.generateClientId();
         MqttAndroidClient client =
                 new MqttAndroidClient(this.getApplicationContext(), "tcp://192.168.0.103:1883",
                         clientId);
@@ -122,29 +122,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (MqttException e) {
             e.printStackTrace();
         }
-*/
+
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }
+
