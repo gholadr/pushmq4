@@ -11,15 +11,19 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 /**
  * Created by macbook on 3/7/16.
  */
 public class BackgroundService extends IntentService{
 
-    public static String TAG ="Backgrounder";
+    private static String TAG =BackgroundService.class.getSimpleName();
+    private MqttAndroidClient client;
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -40,13 +44,19 @@ public class BackgroundService extends IntentService{
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        String clientId = MqttClient.generateClientId();
-        MqttAndroidClient client =
-                new MqttAndroidClient(this.getApplicationContext(), "tcp://192.168.0.103:1883",
-                        clientId);
+        String clientId = Installation.getUniqueDeviceId(getApplicationContext());
+        String GCP_URL = "tcp://172.17.8.252:1883";
+        String LOCAL_URL = "tcp://192.168.1.252:1883";
 
+
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        MqttDefaultFilePersistence mqttDefaultFilePersistence = new MqttDefaultFilePersistence(tmpDir);
+
+        client =
+                new MqttAndroidClient(this.getApplicationContext(), GCP_URL,
+                        clientId,mqttDefaultFilePersistence);
         try {
-            client.setCallback(new MqttCallback() {
+            client.setCallback(new MessageCallback() {
 
                 @Override
                 public void connectionLost(Throwable cause) {
@@ -76,14 +86,30 @@ public class BackgroundService extends IntentService{
         }
 
         try {
-            IMqttToken token = client.connect();
+
+            MqttConnectOptions connOpt = new MqttConnectOptions();
+
+            connOpt.setCleanSession(false);
+            connOpt.setKeepAliveInterval(30);
+            connOpt.setUserName("admin");
+            connOpt.setPassword("password".toCharArray());
+
+            IMqttToken token = client.connect(connOpt);
 
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     // We are connected
                     Log.d(TAG, "onSuccess");
-                    subscribe(asyncActionToken);
+                    if(asyncActionToken == null){
+                        Log.d(TAG, "obj is null");
+                    }
+                    else{
+                        Log.d(TAG, "not null session present " + asyncActionToken.getSessionPresent());
+                    }
+                    //Log.d(TAG, "session present?:" + asyncActionToken.getSessionPresent());
+
+                        subscribe(asyncActionToken);
 
                 }
 
@@ -91,20 +117,27 @@ public class BackgroundService extends IntentService{
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     // Something went wrong e.g. connection timeout or firewall problems
                     Log.d(TAG, "onFailure");
-
+                    try {
+                        asyncActionToken.getClient().disconnect();
+                    }catch(MqttException e){
+                        Log.e(TAG, e.getMessage());
+                    }
                 }
             });
+
         } catch (MqttException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
+
     }
 
-    public void subscribe(IMqttToken token){
 
-        String topic = "foo/bar/message";
-        int qos = 0;
+    public void subscribe(IMqttToken subToken){
+
+        String topic = "topic/event"; //foo/bar/message";
+        int qos = 1;
         try {
-            IMqttToken subToken = token.getClient().subscribe(topic, qos);
+            subToken = subToken.getClient().subscribe(topic, qos);
             subToken.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
@@ -116,13 +149,26 @@ public class BackgroundService extends IntentService{
                                       Throwable exception) {
                     // The subscription could not be performed, maybe the user was not
                     // authorized to subscribe on the specified topic e.g. using wildcards
-
                 }
             });
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
 
+
+    @Override
+    public void onDestroy() {
+/*        Log.d(TAG, "onDestroy");
+        if(.client != null){
+            try {
+
+                client.disconnect();
+
+            }catch (MqttException e){
+                Log.e(TAG,e.getMessage());
+            }
+        }*/
     }
 }
 

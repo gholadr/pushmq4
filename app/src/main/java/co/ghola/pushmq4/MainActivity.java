@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(!serviceIsRunning()) {
+        if(!serviceIsRunning() && DeviceStatus.isOnline(this)) {
             Intent mServiceIntent = new Intent(this, BackgroundService.class);
             startService(mServiceIntent);
         }
