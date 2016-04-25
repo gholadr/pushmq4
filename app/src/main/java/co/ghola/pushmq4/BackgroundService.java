@@ -105,9 +105,8 @@ public class BackgroundService extends IntentService{
                         Log.d(TAG, "obj is null");
                     }
                     else{
-                        Log.d(TAG, "not null session present " + asyncActionToken.getSessionPresent());
+                        Log.d(TAG, "asyncActionToken obj not null. session present: " + asyncActionToken.getSessionPresent());
                     }
-                    //Log.d(TAG, "session present?:" + asyncActionToken.getSessionPresent());
 
                         subscribe(asyncActionToken);
 
