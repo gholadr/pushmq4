@@ -16,15 +16,14 @@ import co.ghola.pushmq4.BackgroundService;
  */
 
 public class NetWatcher extends BroadcastReceiver {
-    private final String TAG = "DeviceStatus";
+    private final String TAG = NetWatcher.class.getSimpleName();
     @Override
     public void onReceive(Context context, Intent intent) {
         //here, check that the network connection is available. If yes, start your service. If not, stop your service.
 
-
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
-        if(DeviceStatus.isOnline(context)){
+        if(!ServiceUtils.getInstance().serviceIsRunning(context) && DeviceStatus.isOnline(context)){
             //start service
             intent = new Intent(context, BackgroundService.class);
             intent.setAction(Constants.CONNECT_CLIENT);

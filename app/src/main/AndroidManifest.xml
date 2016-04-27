@@ -7,22 +7,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
-        android:clearTaskOnLaunch="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".PushReceiver" />
 
         <!-- Mqtt Service -->
         <service android:name="org.eclipse.paho.android.service.MqttService"></service>
+
         <service
             android:name=".BackgroundService"
             android:exported="false">
@@ -41,7 +35,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <receiver
+            android:name=".MainActivity$PushReceiver"
+            android:enabled="true"
+            android:exported="false"/>
         <receiver
             android:name=".NetWatcher"
             android:enabled="true"

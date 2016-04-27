@@ -35,7 +35,7 @@ import android.util.Log;
 
 public final class DeviceStatus {
 
-    private final static String TAG = "DeviceStatus";
+    private final static String TAG = DeviceStatus.class.getSimpleName();
     /** Non instance constant class. */
     private DeviceStatus() {
     }

@@ -1,81 +1,89 @@
 package co.ghola.pushmq4;
 
-import android.app.ActivityManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import android.widget.TextView;
+import org.eclipse.paho.android.service.MqttService;
 
 public class MainActivity extends AppCompatActivity {
-    private static String TAG = "my little app";
-    private final static String SERVICE_CLASSNAME ="co.ghola.pushmq4.BackgroundService";
+    private static String TAG = MainActivity.class.getSimpleName();
+    private PushReceiver receiver;
+    MqttService mqService;
+    boolean mBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        if(!serviceIsRunning() && DeviceStatus.isOnline(this)) {
+        if(!ServiceUtils.getInstance().serviceIsRunning(getApplicationContext()) && DeviceStatus.isOnline(this)) {
             Intent mServiceIntent = new Intent(this, BackgroundService.class);
             startService(mServiceIntent);
         }
     }
 
-    private boolean serviceIsRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (SERVICE_CLASSNAME.equals(service.service.getClassName())) {
-                return true;
+    @Override
+    protected void onResume(){
+        super.onResume();
+/*
+        IntentFilter filter = new IntentFilter(Constants.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new PushReceiver();
+        LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(receiver, filter);*/
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Unregister the listener when the application is paused
+       // LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(receiver);
+        // or `unregisterReceiver(testReceiver)` for a normal broadcast
+    }
+
+    public static class PushReceiver extends BroadcastReceiver
+    {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            String notificationTitle = "MQTT Test";
+            String notificationDesc = "It works!";
+
+            if ( intent.getStringExtra("message") != null )
+            {
+                notificationDesc = intent.getStringExtra("message");
             }
+
+            Log.d(TAG, "onReceive");
+            int notificationID = 100;
+            Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+            NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(
+                    context);
+            nBuilder.setContentTitle(notificationTitle);
+            nBuilder.setContentText(notificationDesc);
+            nBuilder.setSmallIcon(R.drawable.icon_alpha);
+            nBuilder.setLargeIcon(largeIcon); //setLargeIcon(R.drawable.ic_launcher);
+            intent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 1234, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            nBuilder.setContentIntent(pendingIntent);
+            nBuilder.setAutoCancel(true);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(notificationID, nBuilder.build());
+
+            //TextView result = (TextView) findViewById(R.id.text);
+            //result.setText(notificationDesc);
+
         }
-        return false;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 }

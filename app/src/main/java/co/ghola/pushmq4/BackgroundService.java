@@ -3,7 +3,9 @@ package co.ghola.pushmq4;
 import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -22,14 +24,15 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 public class BackgroundService extends IntentService{
 
     private static String TAG =BackgroundService.class.getSimpleName();
-    private MqttAndroidClient client;
+    private MqttAndroidClient client = null;
+
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
      */
     public BackgroundService() {
-        super("BackgroundService");
+        super(TAG);
     }
 
     @Override
@@ -44,122 +47,90 @@ public class BackgroundService extends IntentService{
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        String clientId = Installation.getUniqueDeviceId(getApplicationContext());
-        String GCP_URL = "tcp://172.17.8.252:1883";
-        String LOCAL_URL = "tcp://192.168.1.252:1883";
+        //no need to reinstantiate the client again
+        if (client != null) return;
+
+        final String topic = "co/ghola/mqtt/test";
+        final int QoS = 2;
+        String clientId = "android-client-" + Installation.getUniqueDeviceId(getApplicationContext());
+        String broker = "tcp://192.168.0.101:1883";
+        // String broker = "tcp://iot.eclipse.org:1883";
 
 
-        String tmpDir = System.getProperty("java.io.tmpdir");
+        String tmpDir = getFilesDir().toString();
+        Log.d(TAG, tmpDir);
         MqttDefaultFilePersistence mqttDefaultFilePersistence = new MqttDefaultFilePersistence(tmpDir);
 
-        client =
-                new MqttAndroidClient(this.getApplicationContext(), GCP_URL,
-                        clientId,mqttDefaultFilePersistence);
-        try {
-            client.setCallback(new MessageCallback() {
+        client = new MqttAndroidClient(this.getApplicationContext(), broker, clientId, mqttDefaultFilePersistence);
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                Log.d(TAG, "Connection was lost! ");
+            }
 
-                @Override
-                public void connectionLost(Throwable cause) {
-                    Log.d(TAG, "connection Lost");
-                }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                Log.d(TAG, "Message Arrived!: " + topic + ": " + new String(message.getPayload()));
+                // TextView textView = (TextView) findViewById(R.id.text);
+                // textView.setText(new String(message.getPayload()));
+   //             Intent push = new Intent(getApplicationContext(), MainActivity.class);
 
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-                    Log.d(TAG, "delivered");
+                Intent push = new Intent(getApplicationContext(), MainActivity.PushReceiver.class);
+                push.setAction(Constants.ACTION_RESP);
+                push.addCategory(Intent.CATEGORY_DEFAULT);
+                push.putExtra("message", message.toString());
 
-                    Intent push = new Intent(getApplicationContext(), PushReceiver.class);
+                sendBroadcast(push);
 
-                    //push.setPackage("co.ghola.pushmq.receivers");
-                    push.putExtra("message", message.toString());
-                    //push.setAction("pushMQ");
-                    getApplicationContext().sendBroadcast(push);
+            }
 
-                }
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+                Log.d(TAG, "Delivery Complete!");
 
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
+            }
+        });
 
-                }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
+    try {
+        MqttConnectOptions connOpt = new MqttConnectOptions();
+        connOpt.setKeepAliveInterval(30);
+        connOpt.setAutomaticReconnect(true);
+        connOpt.setCleanSession(false);
+        connOpt.setConnectionTimeout(15);
 
-        try {
 
-            MqttConnectOptions connOpt = new MqttConnectOptions();
-
-            connOpt.setCleanSession(false);
-            connOpt.setKeepAliveInterval(30);
-            connOpt.setUserName("admin");
-            connOpt.setPassword("password".toCharArray());
-
-            IMqttToken token = client.connect(connOpt);
-
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    // We are connected
-                    Log.d(TAG, "onSuccess");
-                    if(asyncActionToken == null){
-                        Log.d(TAG, "obj is null");
-                    }
-                    else{
-                        Log.d(TAG, "asyncActionToken obj not null. session present: " + asyncActionToken.getSessionPresent());
-                    }
-
-                        subscribe(asyncActionToken);
+        client.connect(connOpt, new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                System.out.println("Connection Success!");
+                try {
+                    Log.d(TAG, String.format("Subscribing to %s, QoS %s", topic, QoS));
+                    client.subscribe(topic, QoS);
+                    Log.d(TAG, String.format("Subscribed to %s, QoS %s", topic, QoS));
+                    // System.out.println("Publishing message..");
+                    // mqttAndroidClient.publish("co/ghola/mqtt/test", new MqttMessage("Bonjour!!".getBytes()));
+                } catch (MqttException ex) {
 
                 }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    // Something went wrong e.g. connection timeout or firewall problems
-                    Log.d(TAG, "onFailure");
-                    try {
-                        asyncActionToken.getClient().disconnect();
-                    }catch(MqttException e){
-                        Log.e(TAG, e.getMessage());
-                    }
-                }
-            });
+            }
 
-        } catch (MqttException e) {
-            Log.e(TAG, e.getMessage());
-        }
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                Log.d(TAG, "Connection Failure!");
+            }
+        });
+    }
+    catch (MqttException ex) {
 
     }
-
-
-    public void subscribe(IMqttToken subToken){
-
-        String topic = "topic/event"; //foo/bar/message";
-        int qos = 1;
-        try {
-            subToken = subToken.getClient().subscribe(topic, qos);
-            subToken.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d(TAG, "I'm now subscribed!");
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken,
-                                      Throwable exception) {
-                    // The subscription could not be performed, maybe the user was not
-                    // authorized to subscribe on the specified topic e.g. using wildcards
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
     }
 
 
     @Override
     public void onDestroy() {
-/*        Log.d(TAG, "onDestroy");
-        if(.client != null){
+        Log.d(TAG, "onDestroy");
+        if(client != null){
             try {
 
                 client.disconnect();
@@ -167,7 +138,7 @@ public class BackgroundService extends IntentService{
             }catch (MqttException e){
                 Log.e(TAG,e.getMessage());
             }
-        }*/
+        }
     }
 }
 
