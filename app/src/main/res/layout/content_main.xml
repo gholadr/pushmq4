@@ -16,11 +16,23 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/broker"
+            android:text="@string/broker_text_default"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/topic"
+            android:text="@string/topic_text_default"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text"
-        android:text="Hello World!"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>/>
+        android:id="@+id/message"
+        android:text="@string/message_text_default"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>/>
     </LinearLayout>
 </RelativeLayout>

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">PushMQ4</string>
     <string name="action_settings">Settings</string>
+    <string name="message_text_default">No MQTT msg.</string>
+    <string name="broker_text_default">No Broker.</string>
+    <string name="topic_text_default">No topic.</string>
 </resources>

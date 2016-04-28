@@ -8,19 +8,21 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.TextView;
-import org.eclipse.paho.android.service.MqttService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = MainActivity.class.getSimpleName();
     private PushReceiver receiver;
-    MqttService mqService;
-    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,24 +33,41 @@ public class MainActivity extends AppCompatActivity {
             Intent mServiceIntent = new Intent(this, BackgroundService.class);
             startService(mServiceIntent);
         }
+        EventBus.getDefault().register(this);
+
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-/*
+        updateValuesFromSharedPrefs();
         IntentFilter filter = new IntentFilter(Constants.ACTION_RESP);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new PushReceiver();
-        LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(receiver, filter);*/
+        LocalBroadcastManager.getInstance(getBaseContext()).registerReceiver(receiver, filter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         // Unregister the listener when the application is paused
-       // LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(receiver);
-        // or `unregisterReceiver(testReceiver)` for a normal broadcast
+        LocalBroadcastManager.getInstance(getBaseContext()).unregisterReceiver(receiver);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void doThis(String text){
+        updateValuesFromSharedPrefs();
+    }
+
+    private void updateValuesFromSharedPrefs(){
+        TextView broker = (TextView) findViewById(R.id.broker);
+        String brokerValue = HelperSharedPreferences.getSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.brokerKey, getResources().getString( R.string.broker_text_default));
+        broker.setText("Broker:" + brokerValue);
+        TextView topic = (TextView) findViewById(R.id.topic);
+        topic.setText("Topic:" + Constants.TOPIC);
+        TextView result = (TextView) findViewById(R.id.message);
+        String textValue = HelperSharedPreferences.getSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.messageKey, getResources().getString( R.string.message_text_default));
+        result.setText("Msg:" +textValue);
     }
 
     public static class PushReceiver extends BroadcastReceiver
@@ -69,21 +88,20 @@ public class MainActivity extends AppCompatActivity {
             Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
             NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(
                     context);
-            nBuilder.setContentTitle(notificationTitle);
-            nBuilder.setContentText(notificationDesc);
-            nBuilder.setSmallIcon(R.drawable.icon_alpha);
-            nBuilder.setLargeIcon(largeIcon); //setLargeIcon(R.drawable.ic_launcher);
             intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 1234, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            nBuilder.setContentIntent(pendingIntent);
-            nBuilder.setAutoCancel(true);
+
+            nBuilder
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationDesc)
+                    .setSmallIcon(R.drawable.icon_alpha)
+                    .setLights(Color.RED, 3000, 3000)
+                    .setLargeIcon(largeIcon) //setLargeIcon(R.drawable.ic_launcher)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
             NotificationManager mNotificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(notificationID, nBuilder.build());
-
-            //TextView result = (TextView) findViewById(R.id.text);
-            //result.setText(notificationDesc);
-
         }
     }
 }

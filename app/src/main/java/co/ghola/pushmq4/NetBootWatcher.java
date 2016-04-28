@@ -15,8 +15,8 @@ import co.ghola.pushmq4.BackgroundService;
  * Created by gholadr on 3/1/16. restarts service in case of connectivity loss due to network disconnect.
  */
 
-public class NetWatcher extends BroadcastReceiver {
-    private final String TAG = NetWatcher.class.getSimpleName();
+public class NetBootWatcher extends BroadcastReceiver {
+    private final String TAG = NetBootWatcher.class.getSimpleName();
     @Override
     public void onReceive(Context context, Intent intent) {
         //here, check that the network connection is available. If yes, start your service. If not, stop your service.

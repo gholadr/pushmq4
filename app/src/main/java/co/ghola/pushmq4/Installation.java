@@ -34,7 +34,7 @@ public final class Installation{
                 throw new RuntimeException(e);
             }
         }
-        Log.d(TAG, Installation.class + ":" + deviceId);
+        Log.d(TAG, Installation.class + " unique deviceId:" + deviceId);
         return deviceId;
     }
     private static String readInstallationFile(File installation) throws IOException {

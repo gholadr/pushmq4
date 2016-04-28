@@ -17,6 +17,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Created by macbook on 3/7/16.
@@ -26,11 +27,6 @@ public class BackgroundService extends IntentService{
     private static String TAG =BackgroundService.class.getSimpleName();
     private MqttAndroidClient client = null;
 
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     */
     public BackgroundService() {
         super(TAG);
     }
@@ -45,24 +41,23 @@ public class BackgroundService extends IntentService{
         }
         return Service.START_STICKY;
     }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         //no need to reinstantiate the client again
         if (client != null) return;
 
-        final String topic = "co/ghola/mqtt/test";
-        final int QoS = 2;
-        String clientId = "android-client-" + Installation.getUniqueDeviceId(getApplicationContext());
-        String broker = "tcp://192.168.0.101:1883";
-        // String broker = "tcp://iot.eclipse.org:1883";
+            String broker = Constants.LOCAL_BROKER_URL;
+            HelperSharedPreferences.putSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.brokerKey,broker);
+            String clientId = "android-client-" + Installation.getUniqueDeviceId(getApplicationContext());
 
+            String tmpDir = getFilesDir().toString();
+            Log.d(TAG, tmpDir);
+            MqttDefaultFilePersistence mqttDefaultFilePersistence = new MqttDefaultFilePersistence(tmpDir);
 
-        String tmpDir = getFilesDir().toString();
-        Log.d(TAG, tmpDir);
-        MqttDefaultFilePersistence mqttDefaultFilePersistence = new MqttDefaultFilePersistence(tmpDir);
+            client = new MqttAndroidClient(this.getApplicationContext(), broker, clientId, mqttDefaultFilePersistence);
+            client.setCallback(new MqttCallback() {
 
-        client = new MqttAndroidClient(this.getApplicationContext(), broker, clientId, mqttDefaultFilePersistence);
-        client.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
                 Log.d(TAG, "Connection was lost! ");
@@ -71,15 +66,12 @@ public class BackgroundService extends IntentService{
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.d(TAG, "Message Arrived!: " + topic + ": " + new String(message.getPayload()));
-                // TextView textView = (TextView) findViewById(R.id.text);
-                // textView.setText(new String(message.getPayload()));
-   //             Intent push = new Intent(getApplicationContext(), MainActivity.class);
-
+                HelperSharedPreferences.putSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.messageKey, new String(message.getPayload()));
                 Intent push = new Intent(getApplicationContext(), MainActivity.PushReceiver.class);
                 push.setAction(Constants.ACTION_RESP);
                 push.addCategory(Intent.CATEGORY_DEFAULT);
                 push.putExtra("message", message.toString());
-
+                EventBus.getDefault().post(message.toString());
                 sendBroadcast(push);
 
             }
@@ -87,45 +79,42 @@ public class BackgroundService extends IntentService{
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
                 Log.d(TAG, "Delivery Complete!");
-
             }
         });
 
-    try {
-        MqttConnectOptions connOpt = new MqttConnectOptions();
-        connOpt.setKeepAliveInterval(30);
-        connOpt.setAutomaticReconnect(true);
-        connOpt.setCleanSession(false);
-        connOpt.setConnectionTimeout(15);
+        try {
+            MqttConnectOptions connOpt = new MqttConnectOptions();
+            connOpt.setKeepAliveInterval(30);
+            connOpt.setAutomaticReconnect(true);
+            connOpt.setCleanSession(false);
+            connOpt.setConnectionTimeout(15);
 
+            client.connect(connOpt, new IMqttActionListener() {
 
-        client.connect(connOpt, new IMqttActionListener() {
-            @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
-                System.out.println("Connection Success!");
-                try {
-                    Log.d(TAG, String.format("Subscribing to %s, QoS %s", topic, QoS));
-                    client.subscribe(topic, QoS);
-                    Log.d(TAG, String.format("Subscribed to %s, QoS %s", topic, QoS));
-                    // System.out.println("Publishing message..");
-                    // mqttAndroidClient.publish("co/ghola/mqtt/test", new MqttMessage("Bonjour!!".getBytes()));
-                } catch (MqttException ex) {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    System.out.println("Connection Success!");
+                    try {
+                        Log.d(TAG, String.format("Subscribing to %s, QoS %s", Constants.TOPIC, Constants.QoS));
+                        client.subscribe(Constants.TOPIC, Constants.QoS);
+                        Log.d(TAG, String.format("Subscribed to %s, QoS %s", Constants.TOPIC, Constants.QoS));
 
+                    }
+                    catch (MqttException ex) {
+                        Log.d(TAG, ex.getCause().getMessage());
+                    }
                 }
 
-            }
-
-            @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                Log.d(TAG, "Connection Failure!");
-            }
-        });
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d(TAG, "Connection Failure!");
+                }
+            });
+        }
+        catch (MqttException ex) {
+            Log.d(TAG, ex.getCause().getMessage());
+        }
     }
-    catch (MqttException ex) {
-
-    }
-    }
-
 
     @Override
     public void onDestroy() {
