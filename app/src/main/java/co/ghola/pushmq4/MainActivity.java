@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationDesc)
                     .setSmallIcon(R.drawable.icon_alpha)
-                    .setLights(Color.RED, 3000, 3000)
+                    .setLights(Color.MAGENTA, 3000, 3000)
                     .setLargeIcon(largeIcon) //setLargeIcon(R.drawable.ic_launcher)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
