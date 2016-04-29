@@ -2,12 +2,6 @@ var mqtt = require('mqtt');
 var url = require('url');
 var argv = require('minimist')(process.argv.slice(2));
 var art = require('ascii-art');
-// Parse
-//var mqtt_url = url.parse("mqtt://dgkrzmjj:BFNtMSvXUEBs@m21.cloudmqtt.com:15020");
-
-//var mqtt_url = url.parse("tcp://pushmq-drossellat.c9users.io:1883");
-
-//var mqtt_url = url.parse("tcp://iot.eclipse.org:1883");
 
 
 art.font('MQTT', 'Basic', 'red').font('v0.1', 'Doom', 'magenta', function(rendered){
@@ -34,10 +28,11 @@ function start(){
     process.exit();
   }
   else{
-    message = "nodejs app:" + argv.message;
+    message = "from Mosca, with love:" + argv.message;
   }
   
-  var mqtt_url = url.parse("tcp://192.168.0.102:1883");
+  var mqtt_url = url.parse("tcp://iot.eclipse.org:1883");
+  //var mqtt_url = url.parse("tcp://192.168.0.102:1883");
 
   if(argv.broker !=undefined){
    mqtt_url = argv.broker ;
