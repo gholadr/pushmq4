@@ -1,0 +1,15 @@
+{
+  "name": "MQTT-example",
+  "version": "0.1.0",
+  "description": "a simple node js application to test MQTT",
+  "main": "client.js",
+  "repository": "",
+  "author": "david rossellat <david.rossellat@gmail.com>",
+  "dependencies": {
+    "ascii-art": "0.0.2-alpha",
+    "minimist": "^1.2.0",
+    "mosca": "^1.1.2",
+    "mqtt": "^1.7.3",
+    "url": "^0.11.0"
+  }
+}
