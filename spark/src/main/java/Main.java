@@ -7,10 +7,7 @@ public class Main {
         port(8081);
 
         get("/", (request, response) -> "Hello!");
-
         get("/hello", (request, response) -> "Hello World!");
-
-
         post("/publish", (request, response) -> {
             final String topic = "co/ghola/mqtt/test";
             String broker = "tcp://iot.eclipse.org:1883";
@@ -48,17 +45,9 @@ public class Main {
                     }
                 });
 
-
-               // sampleClient.setReconnect(true);  // Enable Automatic Reconnect
-
-                DisconnectedBufferOptions bufferOpts = new DisconnectedBufferOptions();
-                bufferOpts.setPersistBuffer(false);
-
                 System.out.println("Connecting to broker: " + broker);
                 sampleClient.connect(connOpts);
                 System.out.println("Connected");
-
-
                 MqttMessage message = new MqttMessage(String.format("From Spark, with love:%s", msg).getBytes() );
                 message.setQos(2);
                 message.setRetained(false);
@@ -73,10 +62,8 @@ public class Main {
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
-
-
-
-            } catch (MqttException me) {
+            }
+            catch (MqttException me) {
                 System.out.println("reason " + me.getReasonCode());
                 System.out.println("msg " + me.getMessage());
                 System.out.println("loc " + me.getLocalizedMessage());
