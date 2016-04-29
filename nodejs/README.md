@@ -16,12 +16,12 @@ For help, type `node client.js --help`
 
 Basic usage
 
-`node client.js --message='Hello Friends!'
+`node client.js --message='Hello Friends!'`
 
 Publish, but with different topic
 
-`node client.js  --message='Hello Friends!' --topic='my/new/topic'
+`node client.js  --message='Hello Friends!' --topic='my/new/topic'`
 
 `Publish, but with different broker
 
-`node client.js  --message='Hello Friends!' --broker='tcp:IP:1883'
+`node client.js  --message='Hello Friends!' --broker='tcp:host:1883'`
