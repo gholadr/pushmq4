@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         topic.setText("Topic:" + Constants.TOPIC);
         TextView result = (TextView) findViewById(R.id.message);
         String textValue = HelperSharedPreferences.getSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.messageKey, getResources().getString( R.string.message_text_default));
-        result.setText("Msg:" +textValue);
+        result.setText(textValue);
     }
 
     public static class PushReceiver extends BroadcastReceiver

@@ -56,6 +56,8 @@ public class BackgroundService extends IntentService{
 
             @Override
             public void connectionLost(Throwable cause) {
+
+                
                 Log.d(TAG, "Connection was lost! ");
             }
 
