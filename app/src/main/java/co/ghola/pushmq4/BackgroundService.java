@@ -43,7 +43,7 @@ public class BackgroundService extends IntentService{
         //no need to reinstantiate the client again
         if (client != null) return;
 
-            String broker = Constants.LOCAL_BROKER_URL;
+            String broker = Constants.BROKER_URL;
             HelperSharedPreferences.putSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.brokerKey,broker);
             String clientId = "android-client-" + Installation.getUniqueDeviceId(getApplicationContext());
 
@@ -57,7 +57,7 @@ public class BackgroundService extends IntentService{
             @Override
             public void connectionLost(Throwable cause) {
 
-                
+
                 Log.d(TAG, "Connection was lost! ");
             }
 
