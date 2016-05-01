@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.UUID;
 
-
-
 /**
  * Created by gholadr on 3/1/16. Singleton class that sets and retrieves a unique identifier for the device
  */

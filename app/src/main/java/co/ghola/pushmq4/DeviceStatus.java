@@ -32,7 +32,9 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-
+/**
+ * Created by gholadr on 4/28/16.
+ */
 public final class DeviceStatus {
 
     private final static String TAG = DeviceStatus.class.getSimpleName();

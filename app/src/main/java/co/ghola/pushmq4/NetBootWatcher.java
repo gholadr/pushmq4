@@ -7,8 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-
-
 /**
  * Created by gholadr on 3/1/16. restarts service in case of connectivity loss due to network disconnect.
  */
