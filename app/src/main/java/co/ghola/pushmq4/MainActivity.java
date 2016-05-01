@@ -16,9 +16,13 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Random;
 
 /**
  * Created by gholadr on 4/28/16.
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
         if(!ServiceUtils.getInstance().serviceIsRunning(getApplicationContext()) && DeviceStatus.isOnline(this)) {
@@ -73,6 +78,23 @@ public class MainActivity extends AppCompatActivity {
         result.setText(textValue);
     }
 
+    public static int randInt(int min, int max) {
+
+        // NOTE: This will (intentionally) not run as written so that folks
+        // copy-pasting have to think about how to initialize their
+        // Random instance.  Initialization of the Random instance is outside
+        // the main scope of the question, but some decent options are to have
+        // a field that is initialized once and then re-used as needed or to
+        // use ThreadLocalRandom (if using at least Java 1.7).
+        Random rand = new Random();;
+
+        // nextInt is normally exclusive of the top value,
+        // so add 1 to make it inclusive
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+
+        return randomNum;
+    }
+
     public static class PushReceiver extends BroadcastReceiver
     {
         @Override
@@ -86,14 +108,12 @@ public class MainActivity extends AppCompatActivity {
                 notificationDesc = intent.getStringExtra("message");
             }
 
-            Log.d(TAG, "onReceive");
-            int notificationID = 100;
+            int notificationID = randInt(0,200);
             Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
             NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(
                     context);
             intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 1234, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
             nBuilder
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationDesc)

@@ -12,3 +12,4 @@
 nodejs/node_modules/
 spark/build
 spark/.idea/
+/.idea/
