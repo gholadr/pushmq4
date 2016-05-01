@@ -5,13 +5,11 @@ import static spark.Spark.*;
 public class Main {
     public static void main(String[] args) {
         port(8081);
-
         get("/", (request, response) -> "Hello!");
-        get("/hello", (request, response) -> "Hello World!");
         post("/publish", (request, response) -> {
             final String topic = "co/ghola/mqtt/test";
-            String broker = "tcp://iot.eclipse.org:1883";
-           // String broker = "tcp://192.168.0.102:1883";
+           // String broker = "tcp://iot.eclipse.org:1883";
+            String broker = "tcp://192.168.0.103:1883";
             String clientId = "java-mqtt-demo-app";
             String msg = request.queryParams("message");
             MemoryPersistence persistence = new MemoryPersistence();
@@ -52,6 +50,7 @@ public class Main {
                 message.setQos(2);
                 message.setRetained(false);
                 System.out.println(message.toString());
+
                 try {
                     if (sampleClient.isConnected()) {
                         sampleClient.publish(topic, message);

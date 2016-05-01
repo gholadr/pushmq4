@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                 notificationDesc = intent.getStringExtra("message");
             }
 
-            int notificationID = randInt(0,200);
+            int notificationID = randInt(0,Integer.MAX_VALUE);
             Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
             NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(
                     context);
