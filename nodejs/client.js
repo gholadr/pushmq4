@@ -32,7 +32,7 @@ function start(){
   }
   
   //var mqtt_url = url.parse("tcp://iot.eclipse.org:1883");
-  var mqtt_url = url.parse("tcp://192.168.0.103:1883");
+  var mqtt_url = url.parse("tcp://192.168.0.102:1883");
 
   if(argv.broker !=undefined){
    mqtt_url = argv.broker ;
