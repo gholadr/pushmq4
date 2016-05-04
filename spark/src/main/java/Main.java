@@ -9,7 +9,7 @@ public class Main {
         post("/publish", (request, response) -> {
             final String topic = "co/ghola/mqtt/test";
            // String broker = "tcp://iot.eclipse.org:1883";
-            String broker = "tcp://192.168.0.102:1883";
+            String broker = "tcp://mosquitto.mysquar.com:1883";
             String clientId = "java-mqtt-demo-app";
             String msg = request.queryParams("message");
             MemoryPersistence persistence = new MemoryPersistence();

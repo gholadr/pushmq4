@@ -49,11 +49,8 @@ public class BackgroundService extends IntentService{
         String broker = Constants.LOCAL_BROKER_URL;
         HelperSharedPreferences.putSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.brokerKey,broker);
         String clientId = "android-client-" + Installation.getUniqueDeviceId(getApplicationContext());
-
         String tmpDir = getFilesDir().toString();
-        Log.d(TAG, tmpDir);
         MqttDefaultFilePersistence mqttDefaultFilePersistence = new MqttDefaultFilePersistence(tmpDir);
-       // MemoryPersistence memoryPersistence = new MemoryPersistence();
 
         client = new MqttAndroidClient(this.getApplicationContext(), broker, clientId, mqttDefaultFilePersistence, MqttAndroidClient.Ack.AUTO_ACK);
         client.setTraceEnabled(true);
