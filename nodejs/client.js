@@ -52,10 +52,6 @@ function start(){
     console.log()
     console.log(art.style("Connected!", 'black+green_bg'));
     // subscribe to a topic
-
-
-
-
     client.subscribe(topic, function() {
       // when a message arrives, do something with it
       client.on('message', function(topic, message, packet) {
@@ -64,24 +60,11 @@ function start(){
       });
     });
 
-      var msg = {
-    topic: 'co/ghola/mqtt/test',
-    payload: 'abcde', // or a Buffer
-    qos: 2, // 0, 1, or 2
-    retain: false // or true
-  };
-
-  // client.publish(message, function() {
-  //     console.log()
-  //     console.log(art.style("Message is published", 'black+green_bg'));
-  //     client.end();
-  // });
-
-    // // publish a message to a topic
-     client.publish(message,function() {
-       console.log()
-       console.log(art.style("Message is published", 'black+green_bg'));
-       client.end(); // Close the connection when published
-     });
+    // publish a message to a topic
+    client.publish('co/ghola/mqtt/test',message,function() {
+      console.log()
+      console.log(art.style("Message is published", 'black+green_bg'));
+      client.end(); // Close the connection when published
+    });
   });
 }

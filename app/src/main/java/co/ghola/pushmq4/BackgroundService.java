@@ -120,16 +120,10 @@ public class BackgroundService extends IntentService{
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+
         if(client != null){
-            try {
-
-                client.close();
-                client.disconnect();
-
-            }catch (MqttException e){
-                Log.e(TAG,e.getMessage());
-            }
+            client.close();
+            Log.d(TAG, "Releasing all ressources");
         }
     }
 }
