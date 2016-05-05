@@ -30,7 +30,7 @@ public class NetBootWatcher extends BroadcastReceiver {
             //stop service
             intent = new Intent(context, BackgroundService.class);
             context.stopService(intent);
-            Log.d(TAG, getClass().getCanonicalName() + ": Disconnected. shutting down socket service");
+            Log.d(TAG, getClass().getCanonicalName() + ": Disconnected. shutting down background service");
         }
     }
 }

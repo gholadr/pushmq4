@@ -13,16 +13,13 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 import android.widget.TextView;
-
 import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.Random;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by gholadr on 4/28/16.

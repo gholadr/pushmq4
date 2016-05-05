@@ -34,6 +34,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+
         }
     }
 }
@@ -45,11 +46,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile('org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-SNAPSHOT') {
-        //    exclude module: 'support-v4'
-    }
     compile('org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-SNAPSHOT') {
-        exclude module: 'support-v4'
+       // exclude module: 'support-v4'
     }
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
