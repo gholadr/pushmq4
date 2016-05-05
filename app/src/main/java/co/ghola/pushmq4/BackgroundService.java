@@ -107,8 +107,8 @@ public class BackgroundService extends IntentService{
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d(TAG, "Connection Failure!");
-
+                    Log.d(TAG, "Connection Failure!:");
+                    exception.printStackTrace();
                 }
             });
 
@@ -123,7 +123,13 @@ public class BackgroundService extends IntentService{
 
         if(client != null){
             client.close();
-            Log.d(TAG, "Releasing all ressources");
+            try {
+                client.disconnect();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "Releasing all resources");
         }
     }
 }
