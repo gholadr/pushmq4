@@ -12,9 +12,14 @@ On the server side, mosquitto is the MQTT broker
 #### What should happen
 
 this test showcases the following:
-MQTT service survives app kill, crash
-MQTT service is restarted when connectivity is back on and stopped when connectivity drops.
+MQTT service survives app kill,  or crash
+
+MQTT service is restarted when connectivity is back on and stopped when connectivity drops
+
 MQTT service survives an package update
-MQTT service survives sleep mode of device.
+
+MQTT service survives sleep mode of device
+
 MQTT service attempts to reconnects via exponential back-off when broker is no longer available 
+
 MQTt service will receive push notifications sent while the device was offline (persistence)
