@@ -19,7 +19,7 @@
         <service android:name="org.eclipse.paho.android.service.MqttService"></service>
 
         <service
-            android:name=".BackgroundService"
+            android:name=".ForegroundService"
             android:exported="false"/>
         <activity
             android:name=".MainActivity"

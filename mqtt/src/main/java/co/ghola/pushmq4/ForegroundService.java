@@ -24,13 +24,13 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by gholadr on 4/28/16.
  */
-public class BackgroundService extends IntentService{
+public class ForegroundService extends IntentService{
 
-    private static String TAG =BackgroundService.class.getSimpleName();
+    private static String TAG =ForegroundService.class.getSimpleName();
     private MqttAndroidClient client = null;
-    private static final MemoryPersistence DATA_STORE = new MemoryPersistence();
+    public static boolean IS_SERVICE_RUNNING = false;
 
-    public BackgroundService() {
+    public ForegroundService() {
         super(TAG);
     }
 
@@ -61,7 +61,6 @@ public class BackgroundService extends IntentService{
         client = new MqttAndroidClient(this.getApplicationContext(), broker, clientId, mqttDefaultFilePersistence, MqttAndroidClient.Ack.AUTO_ACK);
         client.setTraceEnabled(true);
 
-        //client.setBufferOpts();
         client.setCallback(new MqttCallback() {
 
             @Override

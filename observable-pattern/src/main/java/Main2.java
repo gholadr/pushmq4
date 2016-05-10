@@ -15,6 +15,7 @@ public class Main2 {
                     }
                 }
         );
+        
         Subscriber<String> mySubscriber = new Subscriber<String>() {
             @Override
             public void onNext(String s) { System.out.println(s); }

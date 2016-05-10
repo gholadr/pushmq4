@@ -14,12 +14,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.widget.TextView;
-import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.util.Random;
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by gholadr on 4/28/16.
@@ -35,8 +34,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if(!ServiceUtils.getInstance().serviceIsRunning(getApplicationContext()) && DeviceStatus.isOnline(this)) {
-            Intent mServiceIntent = new Intent(this, BackgroundService.class);
-            startService(mServiceIntent);
+            Intent service = new Intent(this, ForegroundService.class);
+
+            if (!ForegroundService.IS_SERVICE_RUNNING) {
+                service.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+                ForegroundService.IS_SERVICE_RUNNING = true;
+
+            } else {
+                service.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
+                ForegroundService.IS_SERVICE_RUNNING = false;
+
+
+            }
+            startService(service);
         }
         EventBus.getDefault().register(this);
 
