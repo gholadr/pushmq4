@@ -21,14 +21,14 @@ public class NetBootWatcher extends BroadcastReceiver {
         NetworkInfo info = cm.getActiveNetworkInfo();
         if(!ServiceUtils.getInstance().serviceIsRunning(context) && DeviceStatus.isOnline(context)){
             //start service
-            intent = new Intent(context, ForegroundService.class);
+            intent = new Intent(context, BackgroundService.class);
             intent.setAction(Constants.CONNECT_CLIENT);
             context.startService(intent);
             Log.d(TAG, getClass().getCanonicalName() + ": Connected. Starting MQTT service");
         }
         else {
             //stop service
-            intent = new Intent(context, ForegroundService.class);
+            intent = new Intent(context, BackgroundService.class);
             context.stopService(intent);
             Log.d(TAG, getClass().getCanonicalName() + ": Disconnected. shutting down background service");
         }

@@ -15,7 +15,6 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,19 +23,19 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by gholadr on 4/28/16.
  */
-public class ForegroundService extends IntentService{
+public class BackgroundService extends IntentService{
 
-    private static String TAG =ForegroundService.class.getSimpleName();
+    private static String TAG =BackgroundService.class.getSimpleName();
     private MqttAndroidClient client = null;
     public static boolean IS_SERVICE_RUNNING = false;
 
-    public ForegroundService() {
+    public BackgroundService() {
         super(TAG);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Service running");
+        Log.i(TAG, "Starting service...");
         if (intent == null)
             onHandleIntent(new Intent());
         else {
@@ -50,7 +49,10 @@ public class ForegroundService extends IntentService{
 
         Fabric.with(this, new Crashlytics());
         //no need to reinstantiate the client again
-        if (client != null) return;
+        if (client != null) {
+            Log.d(TAG, "MQTT client already instantiated");
+            return;
+        }
 
         String broker = Constants.LOCAL_BROKER_URL;
         HelperSharedPreferences.putSharedPreferencesString(getApplicationContext(),HelperSharedPreferences.SharedPreferencesKeys.brokerKey,broker);
@@ -124,9 +126,10 @@ public class ForegroundService extends IntentService{
         }
     }
 
+    //called by system if device is low on resources, or if stopService is invoked.
     @Override
     public void onDestroy() {
-
+        super.onDestroy();
         if(client != null){
             client.close();
             try {
@@ -136,6 +139,9 @@ public class ForegroundService extends IntentService{
             }
 
             Log.d(TAG, "Releasing all resources");
+        }
+        else{
+            Log.d(TAG, "Stopping service");
         }
     }
 }

@@ -34,18 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if(!ServiceUtils.getInstance().serviceIsRunning(getApplicationContext()) && DeviceStatus.isOnline(this)) {
-            Intent service = new Intent(this, ForegroundService.class);
-
-            if (!ForegroundService.IS_SERVICE_RUNNING) {
-                service.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-                ForegroundService.IS_SERVICE_RUNNING = true;
-
-            } else {
-                service.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
-                ForegroundService.IS_SERVICE_RUNNING = false;
-
-
-            }
+            Intent service = new Intent(this, BackgroundService.class);
+           // BackgroundService.IS_SERVICE_RUNNING = true;
             startService(service);
         }
         EventBus.getDefault().register(this);
