@@ -4,6 +4,9 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -15,6 +18,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.greenrobot.eventbus.EventBus;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by gholadr on 4/28/16.
@@ -42,6 +47,8 @@ public class BackgroundService extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        Fabric.with(this, new Crashlytics());
         //no need to reinstantiate the client again
         if (client != null) return;
 
