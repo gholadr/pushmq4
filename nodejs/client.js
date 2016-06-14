@@ -30,9 +30,9 @@ function start(){
   else{
     message = "from Mosca, with love:" + argv.message;
   }
-  
+  var mqtt_url = url.parse("tcp://raiden-dev.mysquar.com:1883");  
   //var mqtt_url = url.parse("tcp://iot.eclipse.org:1883");
-  var mqtt_url = url.parse("tcp://mosquitto.mysquar.com:1883");
+  //var mqtt_url = url.parse("tcp://mosquitto.mysquar.com:1883");
 
   if(argv.broker !=undefined){
    mqtt_url = argv.broker ;
