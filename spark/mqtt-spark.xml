@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mqtt-spark" default="all">
+  
+  
+  <property file="mqtt-spark.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.ear"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="lib/ant-javafx.jar"/>
+      <include name="lib/dt.jar"/>
+      <include name="lib/javafx-mx.jar"/>
+      <include name="lib/jconsole.jar"/>
+      <include name="lib/packager.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="lib/tools.jar"/>
+      <include name="../../../../../../Users/macbook/Library/Android/sdk"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.gradle:_com.sparkjava:spark-core:2.3.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/com.sparkjava/spark-core/2.3/b0326d867f1ecbc8d624f64175d2aa5809bb0599/spark-core-2.3.jar"/>
+  </path>
+  
+  <path id="library.gradle:_javax.servlet:javax.servlet-api:3.1.0.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/javax.servlet/javax.servlet-api/3.1.0/3cd63d075497751784b2fa84be59432f4905bf7c/javax.servlet-api-3.1.0.jar"/>
+  </path>
+  
+  <path id="library.gradle:_joda-time:joda-time:2.9.3.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/joda-time/joda-time/2.9.3/9e46be514a4ed60bcfbaaba88a3c668cf30476ab/joda-time-2.9.3.jar"/>
+  </path>
+  
+  <path id="library.gradle:_junit:junit:4.11.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/junit/junit/4.11/4e031bb61df09069aeb2bffb4019e7a5034a4ee0/junit-4.11.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty.websocket:websocket-api:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty.websocket/websocket-api/9.3.2.v20150730/be1525f9e86d45ff163394c573ff46773fb40812/websocket-api-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty.websocket:websocket-client:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty.websocket/websocket-client/9.3.2.v20150730/f7cdf36509f8b9d8de49ed60dcb215aa92c36e41/websocket-client-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty.websocket:websocket-common:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty.websocket/websocket-common/9.3.2.v20150730/bd2abf31292508104bacfaba7eceb88d7d5f9ad0/websocket-common-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty.websocket:websocket-server:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty.websocket/websocket-server/9.3.2.v20150730/b43bc3a2fcabd1eb04a522b251d98efd010a2c0f/websocket-server-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty.websocket:websocket-servlet:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty.websocket/websocket-servlet/9.3.2.v20150730/403f4956c46fc5d76257148b5ad36c1e1ca485cd/websocket-servlet-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-http:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-http/9.3.2.v20150730/5a811cf50295ddae7df488e62662524380f18821/jetty-http-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-io:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-io/9.3.2.v20150730/22bd4ad4856527847772f975a997f17da1e6766/jetty-io-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-security:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-security/9.3.2.v20150730/194f37706614f236bfbf384c1e7cf531771b38f7/jetty-security-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-server:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-server/9.3.2.v20150730/d53622049200cee5c344b29c848d581aa876f93e/jetty-server-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-servlet:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-servlet/9.3.2.v20150730/a7ce8b11d340e152dd7dc94e7605c84230f05cf5/jetty-servlet-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-util:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-util/9.3.2.v20150730/96eab74d8886ee9d51b6a3eeab9744807e842169/jetty-util-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-webapp:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-webapp/9.3.2.v20150730/b4bcbd3c978b587c6e4ca13d2ac90bd25ed2c3a2/jetty-webapp-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.jetty:jetty-xml:9.3.2.v20150730.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-xml/9.3.2.v20150730/d064e05b277e7c5522f211c590a04adf99060bcd/jetty-xml-9.3.2.v20150730.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-snapshot.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.android.service/1.0.3-SNAPSHOT/4a5904e9238d4346a65308731a5ea8a231f815d0/org.eclipse.paho.android.service-1.0.3-SNAPSHOT.jar"/>
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.android.service/1.0.3-SNAPSHOT/b8689e57e58f2d7683698d07c8dc592690e836e4/org.eclipse.paho.android.service-1.0.3-SNAPSHOT.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-snapshot.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.0.3-SNAPSHOT/753266e27653dbd86f61da62f4c83fb5842f066a/org.eclipse.paho.client.mqttv3-1.0.3-SNAPSHOT.jar"/>
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.eclipse.paho/org.eclipse.paho.client.mqttv3/1.0.3-SNAPSHOT/f953c299c03f39e6d1dd8610e1df2c85093aaf4f/org.eclipse.paho.client.mqttv3-1.0.3-SNAPSHOT.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.12/8e20852d05222dc286bf1c71d78d0531e177c317/slf4j-api-1.7.12.jar"/>
+  </path>
+  
+  <path id="library.gradle:_org.slf4j:slf4j-simple:1.7.12.classpath">
+    <pathelement location="${basedir}/../../../.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-simple/1.7.12/42db62298b899818ff17352cbc00050e940bbfb0/slf4j-simple-1.7.12.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module mqtt-test -->
+  
+  <dirname property="module.mqtt-test.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.mqtt-test" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mqtt-test" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mqtt-test" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mqtt-test" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="mqtt-test.output.dir" value="${module.mqtt-test.basedir}/build/classes/main"/>
+  <property name="mqtt-test.testoutput.dir" value="${module.mqtt-test.basedir}/build/classes/test"/>
+  
+  <path id="mqtt-test.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mqtt-test.module.production.classpath">
+    <path refid="${module.jdk.classpath.mqtt-test}"/>
+    <path refid="library.gradle:_joda-time:joda-time:2.9.3.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_com.sparkjava:spark-core:2.3.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-util:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-security:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-simple:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-webapp:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_javax.servlet:javax.servlet-api:3.1.0.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-http:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-io:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-xml:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-common:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-client:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-api:9.3.2.v20150730.classpath"/>
+  </path>
+  
+  <path id="mqtt-test.runtime.production.module.classpath">
+    <pathelement location="${mqtt-test.output.dir}"/>
+    <path refid="library.gradle:_joda-time:joda-time:2.9.3.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_com.sparkjava:spark-core:2.3.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-util:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-security:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-simple:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-webapp:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_javax.servlet:javax.servlet-api:3.1.0.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-http:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-io:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-xml:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-common:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-client:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-api:9.3.2.v20150730.classpath"/>
+  </path>
+  
+  <path id="mqtt-test.module.classpath">
+    <path refid="${module.jdk.classpath.mqtt-test}"/>
+    <pathelement location="${mqtt-test.output.dir}"/>
+    <path refid="library.gradle:_joda-time:joda-time:2.9.3.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_com.sparkjava:spark-core:2.3.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-util:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-security:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-simple:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-webapp:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_javax.servlet:javax.servlet-api:3.1.0.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-http:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-io:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-xml:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-common:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-client:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-api:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_junit:junit:4.11.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  <path id="mqtt-test.runtime.module.classpath">
+    <pathelement location="${mqtt-test.testoutput.dir}"/>
+    <pathelement location="${mqtt-test.output.dir}"/>
+    <path refid="library.gradle:_joda-time:joda-time:2.9.3.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_org.eclipse.paho:org.eclipse.paho.android.service:1.0.3-snapshot.classpath"/>
+    <path refid="library.gradle:_com.sparkjava:spark-core:2.3.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-api:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-util:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-security:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.slf4j:slf4j-simple:1.7.12.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-webapp:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-server:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_javax.servlet:javax.servlet-api:3.1.0.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-http:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-io:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-xml:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty:jetty-servlet:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-common:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-client:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_org.eclipse.jetty.websocket:websocket-api:9.3.2.v20150730.classpath"/>
+    <path refid="library.gradle:_junit:junit:4.11.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mqtt-test">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mqtt-test">
+    <patternset refid="excluded.from.module.mqtt-test"/>
+  </patternset>
+  
+  <path id="mqtt-test.module.sourcepath">
+    <dirset dir="${module.mqtt-test.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mqtt-test" depends="compile.module.mqtt-test.production,compile.module.mqtt-test.tests" description="Compile module mqtt-test"/>
+  
+  <target name="compile.module.mqtt-test.production" depends="register.custom.compilers" description="Compile module mqtt-test; production classes">
+    <mkdir dir="${mqtt-test.output.dir}"/>
+    <javac2 destdir="${mqtt-test.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mqtt-test}/javac">
+      <compilerarg line="${compiler.args.mqtt-test}"/>
+      <bootclasspath refid="mqtt-test.module.bootclasspath"/>
+      <classpath refid="mqtt-test.module.production.classpath"/>
+      <src refid="mqtt-test.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mqtt-test"/>
+    </javac2>
+    
+    <copy todir="${mqtt-test.output.dir}">
+      <fileset dir="${module.mqtt-test.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mqtt-test.tests" depends="register.custom.compilers,compile.module.mqtt-test.production" description="compile module mqtt-test; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mqtt-test" description="cleanup module">
+    <delete dir="${mqtt-test.output.dir}"/>
+    <delete dir="${mqtt-test.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.mqtt-test" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.mqtt-test" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
