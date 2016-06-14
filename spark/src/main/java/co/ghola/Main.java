@@ -1,15 +1,19 @@
+package co.ghola;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 import static spark.Spark.*;
 
 public class Main {
+
+
     public static void main(String[] args) {
         port(8081);
         get("/", (request, response) -> "Hello!");
         post("/publish", (request, response) -> {
-            final String topic = "co/ghola/mqtt/test";
-           // String broker = "tcp://iot.eclipse.org:1883";
-            String broker = "tcp://mosquitto.mysquar.com:1883";
+            String topic =  (request.queryParams("topic") != null) ? request.queryParams("topic"): "co/ghola/mqtt/test";
+            System.out.println(topic);
+            String broker = "tcp://raiden-dev.mysquar.com:1883";
             String clientId = "java-mqtt-demo-app";
             String msg = request.queryParams("message");
             MemoryPersistence persistence = new MemoryPersistence();
@@ -47,7 +51,7 @@ public class Main {
                 sampleClient.connect(connOpts);
                 System.out.println("Connected");
                 MqttMessage message = new MqttMessage(String.format("From Spark, with love:%s", msg).getBytes() );
-                message.setQos(2);
+                message.setQos(1);
                 message.setRetained(false);
                 System.out.println(message.toString());
 
